@@ -1,8 +1,11 @@
-<?php
+<?php 
 
+   // mvp oleks siis lehekülg, sarnaselt redditile või 4chanile, saab postitada linke pilte jne, kommenteerida neid, tulevikus mõtleks midagi mis natukene eristaks seda lehte neist, kuid alustuseks mõtlesin nii
+	
+	
 	//if(empty($_POST["password"])){
 	//$password_error = "Ei saa olla tyhi";
-		
+		// 
 	//else{
 		
 	//user_form.php
@@ -10,43 +13,88 @@
 	//jutumärkide vahele input elemendi NAME
 	//echo $_POST["email"]; 
 	//echo $_POST["password"];
-	
-	$email_error = "";
-	$password_error =""; 
-	
-	//kontrolli ainult siis, kui kasutaja vajutab logi sisse nuppu
-	if($_SERVER["REQUEST_METHOD"] == "POST"){
+	//ERRORid
+    $email_error = "";
+    $password_error = "";
+    
+    
+    //Muutujad v22rtustega
+    $email = "";
+    $password = "";
+    
+    
+    //kontrolli ainult siis kui kasutaja vajutab logi sisse nuppu
+    if($_SERVER["REQUEST_METHOD"] == "POST") {
 		
-	}
-	//Kontrollime kasutaja e-posti, et see ei ole tühi.
-	if(empty($_POST["email"])){
-		$email_error = "Ei saa olla tyhi";
-
-	}
-	//kontrollime parooli
-	//parool ei ole tühi, kontrollime pikkust.
-	if(strlen($_POST["password"]) < 8){
-		$password_error = "Peab olema vähemalt 8 symbolit pikk";
-		
-	}
+        
+        //kontrollin kas muutuja $_POST["login"], ehk login nupp
+        if(isset($_POST["login"])){
 			
-?>
+			
+            
+            //Kontrollime kasutaja e-posti, et see ei ole tyhi
+            if(empty($_POST["email"])) {
+                $email_error = "Ei saa olla tyhi";
+            } else {
+                
+                //annan väärtuse
+                $email = test_input($_POST["email"]);
+                
+            }
+            
+            //Kontrollime parooli
+            if(empty($_POST["password"])) {
+                $password_error = "Ei saa olla tyhi";
+            } else {
+                $password = test_input($_POST["password"]);
+            }
+            
+            if($password_error == "" && $email_error == ""){
+                //erroreid ei olnud
+                echo "Kontrollin ".$email." ".$password;
+                
+            }
+            
+            
+        } elseif(isset($_POST["create"])){
+            
+            //siin kontrollida create vormi v2ljad
+            
+        }
+        
+    }
+    
+    function test_input($data) {
+      $data = trim($data);
+      $data = stripslashes($data);
+      $data = htmlspecialchars($data);
+      return $data;
+    }
 
-<html>
-	<head>
-	<title>User login page</title>
-	</head>
-	<body>
-	
-		<h2>Login</h2>
-		<form action="userform.php" method="post">
-		<input name="email" type="email" placeholder="E-post" > <?php echo $email_error ?> <br><br>
-		<input name="password" type="password" placeholder="Parool" > <?php echo $password_error ?> <br><br>
-		
-		<input type="submit" value="Logi sisse"> 
-		</form>
-		
-		<h2>Loo kasutaja</h2>
-	
-	</body>
-</html>
+?>
+<?php 
+    //lehe nimi
+    $page_title = "Login leht";
+    
+    //faili nimi
+    $page_file_name = "login.php";
+    
+?>
+<?php require_once("../header.php"); ?>  
+    
+    <h2>Login</h2>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+        <input name="email" type="email" placeholder="E-post" value="<?php echo $email; ?>" >* <?php echo $email_error; ?> <br><br>
+        <input name="password" type="password" placeholder="Parool" >* <?php echo $password_error; ?><br><br>
+        
+        <input name="login" type ="submit" value="Sign in">
+    </form>
+    
+    <h2>Create user</h2>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+        <input name="email" type="text" placeholder="E-mail" >* <?php echo $email_error; ?> <br><br>
+		<input name="password" type="text" placeholder="Parool" >* <?php echo $password_error; ?> <br><br>
+        <input name="create" type ="submit" value="Sign up">
+    </form>
+        
+<?php require_once("../footer.php"); ?>  
